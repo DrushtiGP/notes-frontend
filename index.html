@@ -1,0 +1,32 @@
+<h1>Smart Notes</h1>
+<form id="noteForm">
+  <input id="title" placeholder="Title"><br>
+  <textarea id="content" placeholder="Content"></textarea><br>
+  <button type="submit">Add Note</button>
+</form>
+<div id="notesList"></div>
+
+<script>
+  const API = "https://notes-backend-1-8f49.onrender.com";
+
+  async function loadNotes() {
+    const res = await fetch(`${API}/notes`);
+    const notes = await res.json();
+    document.getElementById('notesList').innerHTML =
+      notes.map(n => `<p><b>${n.title}</b><br>${n.content}</p>`).join('');
+  }
+
+  document.getElementById('noteForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    await fetch(`${API}/notes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content })
+    });
+    loadNotes();
+  };
+
+  loadNotes();
+</script>
